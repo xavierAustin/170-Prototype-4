@@ -6,12 +6,13 @@ public class Player : MonoBehaviour {
     public float gravity = 2.0f;
     public float fbSpd = 0.7f;
     public float lrSpd = 2.3f;
+    public float mouseSensitivity = 0.3f;
     //private
     string state = "default";
     bool[] input = new bool[6];
     Vector3 vel = new Vector3(0,0,0); //less verbose rigidbody.linearVelocity
     Rigidbody pRB = null;
-    float t = 0.0f; //range from 0 to 1; for general purpose use in easing functions (eg: lerp)
+    float tCameraRot = 0.0f; //range from 0 to 1
     float cameraLocalRotY = 0.0f;
     float cameraLocalRotX = 0.0f;
 
@@ -20,7 +21,6 @@ public class Player : MonoBehaviour {
     }
 
     void FixedUpdate() {
-        t = Mathf.Clamp(t, 0.0f, 1.0f);
         vel = pRB.linearVelocity;
         
         PollInputs();
@@ -67,18 +67,21 @@ public class Player : MonoBehaviour {
     }
 
     void DoCameraLook(){
+        var max = Mathf.Lerp(40.0f, 60.0f, tCameraRot);
         //axis of rotation rather than mouse position
-        cameraLocalRotY = Mathf.Clamp(cameraLocalRotY + Input.mousePositionDelta.x, -40.0f, 40.0f);
-        cameraLocalRotX = Mathf.Clamp(cameraLocalRotX - Input.mousePositionDelta.y, -40.0f, 40.0f);
+        cameraLocalRotY = Mathf.Clamp(cameraLocalRotY + Input.mousePositionDelta.x * mouseSensitivity, -max, max);
+        cameraLocalRotX = Mathf.Clamp(cameraLocalRotX - Input.mousePositionDelta.y * mouseSensitivity, -40.0f, 40.0f);
         pCamera.transform.localEulerAngles = Vector3.up*cameraLocalRotY + Vector3.right*cameraLocalRotX;
     }
 
     void DoCameraLookFixed(){
+        //man cmon c# why doesnt (int)input[4] work this looks so bad ;-;
+        //tCameraRot = (tCameraRot + (input[4] ? 1 : 0))/2;
+        tCameraRot = Mathf.Clamp(tCameraRot + (input[4] ? 0.2f : -0.2f), 0, 1);
         if (input[4])
             return;
-        var angDiff = Mathf.Clamp(cameraLocalRotY, -1.0f, 1.0f);
+        var angDiff = Mathf.Clamp(cameraLocalRotY, -1.5f, 1.5f);
         transform.eulerAngles = (transform.eulerAngles.y + angDiff) * Vector3.up;
-        Debug.Log(angDiff);
         cameraLocalRotY -= angDiff;
         pCamera.transform.localEulerAngles = Vector3.up*cameraLocalRotY + Vector3.right*cameraLocalRotX;
     }
