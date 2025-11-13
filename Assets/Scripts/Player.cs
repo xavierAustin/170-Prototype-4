@@ -4,7 +4,7 @@ public class Player : MonoBehaviour {
     //public
     public GameObject pCamera;
     public float gravity = 2.0f;
-    public float fbSpd = 0.7f;
+    public float fbSpd = 0.4f;
     public float lrSpd = 2.3f;
     public float mouseSensitivity = 0.3f;
     //private
