@@ -9,7 +9,16 @@ public class Player : MonoBehaviour {
     public float mouseSensitivity = 0.3f;
     //private
     string state = "default";
-    bool[] input = new bool[6];
+    enum I {
+        forward,
+        back,
+        left,
+        right,
+        space,
+        mb1,
+        DONOTUSE
+    }
+    bool[] input = new bool[(int)I.DONOTUSE];
     Vector3 vel = new Vector3(0,0,0); //less verbose rigidbody.linearVelocity
     Rigidbody pRB = null;
     float tCameraRot = 0.0f; //range from 0 to 1
@@ -31,8 +40,9 @@ public class Player : MonoBehaviour {
                 DoCameraLookFixed();
             break;
             case ("move"):
-                vel = ((input[0] ? transform.forward : Vector3.zero) - (input[2] ? transform.forward : Vector3.zero)) * fbSpd 
-                    + ((input[3] ? transform.right : Vector3.zero) - (input[1] ? transform.right : Vector3.zero)) * lrSpd;
+                vel = ((input[(int)I.right] ? transform.right : Vector3.zero) - (input[(int)I.left] ? transform.right : Vector3.zero)) * lrSpd;
+                if (!input[(int)I.space])
+                    vel += ((input[(int)I.forward] ? transform.forward : Vector3.zero) - (input[(int)I.back] ? transform.forward : Vector3.zero)) * fbSpd;
                 DoCameraLookFixed();
             break;
             case ("fall"):
@@ -52,12 +62,12 @@ public class Player : MonoBehaviour {
                 state = "default";
             goto case "default"; //c# is actually such a stupid language
             case ("default"):
-                if ((input[1] ^ input[3]) || (input[0] ^ input[2]))
+                if ((input[(int)I.left] ^ input[(int)I.right]) || ((input[(int)I.forward] ^ input[(int)I.back]) && !input[(int)I.space]))
                     state = "move";
                 DoCameraLook();
             break;
             case ("move"):
-                if (!((input[1] ^ input[3]) || (input[0] ^ input[2])))
+                if (!((input[(int)I.left] ^ input[(int)I.right]) || ((input[(int)I.forward] ^ input[(int)I.back]) && !input[(int)I.space])))
                     state = "default";
                 DoCameraLook();
             break;
@@ -75,25 +85,27 @@ public class Player : MonoBehaviour {
     }
 
     void DoCameraLookFixed(){
-        //man cmon c# why doesnt (int)input[4] work this looks so bad ;-;
-        //tCameraRot = (tCameraRot + (input[4] ? 1 : 0))/2;
-        tCameraRot = Mathf.Clamp(tCameraRot + (input[4] ? 0.2f : -0.2f), 0, 1);
-        if (input[4])
-            return;
+        //man cmon c# why doesnt (int)input[(int)I.space] work this looks so bad ;-;
+        //tCameraRot = (tCameraRot + (input[(int)I.space] ? 1 : 0))/2;
+        tCameraRot = Mathf.Clamp(tCameraRot + (input[(int)I.space] ? 0.2f : -0.2f), 0, 1);
         var angDiff = Mathf.Clamp(cameraLocalRotY, -1.5f, 1.5f);
+        if (input[(int)I.space])
+            angDiff *= (input[(int)I.forward] ^ input[(int)I.back]) ? (input[(int)I.back] ? 1 : -1) : 0;
         transform.eulerAngles = (transform.eulerAngles.y + angDiff) * Vector3.up;
+        if (input[(int)I.space])
+            return;
         cameraLocalRotY -= angDiff;
         pCamera.transform.localEulerAngles = Vector3.up*cameraLocalRotY + Vector3.right*cameraLocalRotX;
     }
 
     void PollInputs(){
-        input[0] = (Input.GetKey("w") || Input.GetKey("up") || Input.GetKey("i"));
-        input[1] = (Input.GetKey("a") || Input.GetKey("left") || Input.GetKey("j"));
-        input[2] = (Input.GetKey("s") || Input.GetKey("down") || Input.GetKey("k"));
-        input[3] = (Input.GetKey("d") || Input.GetKey("right") || Input.GetKey("l"));
+        input[(int)I.forward] = (Input.GetKey("w") || Input.GetKey("up") || Input.GetKey("i"));
+        input[(int)I.left] = (Input.GetKey("a") || Input.GetKey("left") || Input.GetKey("j"));
+        input[(int)I.back] = (Input.GetKey("s") || Input.GetKey("down") || Input.GetKey("k"));
+        input[(int)I.right] = (Input.GetKey("d") || Input.GetKey("right") || Input.GetKey("l"));
 
-        input[4] = (Input.GetKey("space") || Input.GetKey("enter"));
+        input[(int)I.space] = (Input.GetKey("space") || Input.GetKey("enter"));
 
-        input[5] = Input.GetMouseButton(0);
+        input[(int)I.mb1] = Input.GetMouseButton(0);
     }
 }
