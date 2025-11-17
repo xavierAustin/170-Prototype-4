@@ -112,7 +112,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.RenderObjects
   m_Active: 1
   settings:
-    passTag: RenderObjects
+    passTag: RenderOutlinedObjects
     Event: 600
     filterSettings:
       RenderQueueType: 0
