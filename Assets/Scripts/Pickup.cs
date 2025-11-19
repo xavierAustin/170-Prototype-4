@@ -7,7 +7,7 @@ public class Pickup : MonoBehaviour
     protected Transform grabPoint;
     protected int previousLayer;
 
-    void Start()
+    protected void Start()
     {
         rb = GetComponent<Rigidbody>();
         previousLayer = gameObject.layer;
@@ -19,19 +19,23 @@ public class Pickup : MonoBehaviour
         grabPoint = GameObject.FindGameObjectWithTag("PlayerGrab").transform;
 
         isHeld = true;
-        rb.isKinematic = true;
+        if (rb)
+            rb.isKinematic = true;
 
         transform.SetParent(grabPoint);
-        transform.localPosition = Vector3.zero;
+        transform.localPosition = Vector3.forward * 2;
         transform.localRotation = Quaternion.identity;
     }
+
+
 
     public void Drop()
     {
         isHeld = false;
 
         transform.SetParent(null);
-        rb.isKinematic = false;
+        if (rb)
+            rb.isKinematic = false;
     }
 
     public void SetOutline(bool value){
