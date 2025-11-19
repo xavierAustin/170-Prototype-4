@@ -2,15 +2,33 @@ using UnityEngine;
 
 public class Pickup : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public bool isHeld = false;
+    Rigidbody rb;
+    Transform grabPoint;
+
     void Start()
     {
-        
+        rb = GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Grab()
     {
-        
+        // grabPoint = the Player's GrabTrigger object
+        grabPoint = GameObject.FindGameObjectWithTag("PlayerGrab").transform;
+
+        isHeld = true;
+        rb.isKinematic = true;
+
+        transform.SetParent(grabPoint);
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity;
+    }
+
+    public void Drop()
+    {
+        isHeld = false;
+
+        transform.SetParent(null);
+        rb.isKinematic = false;
     }
 }

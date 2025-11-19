@@ -24,6 +24,7 @@ public class Player : MonoBehaviour {
     float tCameraRot = 0.0f; //range from 0 to 1
     float cameraLocalRotY = 0.0f;
     float cameraLocalRotX = 0.0f;
+    Pickup currentPickup;
 
     void Start() {
         pRB = GetComponent<Rigidbody>();
@@ -74,7 +75,24 @@ public class Player : MonoBehaviour {
             case ("fall"):
             break;
         }
+        if (input[(int)I.mb1]) {
+            TryGrab();
+        }
+
     }
+    void TryGrab(){
+    if (currentPickup == null) return;
+
+    if (!currentPickup.isHeld)
+    {
+        currentPickup.Grab();
+    }
+    else
+    {
+        currentPickup.Drop();
+    }
+    }
+
 
     void DoCameraLook(){
         var max = Mathf.Lerp(40.0f, 60.0f, tCameraRot);
@@ -108,4 +126,18 @@ public class Player : MonoBehaviour {
 
         input[(int)I.mb1] = Input.GetMouseButton(0);
     }
+    void OnTriggerEnter(Collider other){
+    if (other.CompareTag("Pickup"))
+    {
+        currentPickup = other.GetComponent<Pickup>();
+    }
+    }
+
+    void OnTriggerExit(Collider other){
+    if (other.GetComponent<Pickup>() == currentPickup)
+    {
+        currentPickup = null;
+    }
+    }
+
 }
