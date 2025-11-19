@@ -3,12 +3,14 @@ using UnityEngine;
 public class Pickup : MonoBehaviour
 {
     public bool isHeld = false;
-    Rigidbody rb;
-    Transform grabPoint;
+    protected Rigidbody rb;
+    protected Transform grabPoint;
+    protected int previousLayer;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        previousLayer = gameObject.layer;
     }
 
     public void Grab()
@@ -30,5 +32,9 @@ public class Pickup : MonoBehaviour
 
         transform.SetParent(null);
         rb.isKinematic = false;
+    }
+
+    public void SetOutline(bool value){
+        gameObject.layer = value ? LayerMask.NameToLayer("Outline") : previousLayer;
     }
 }

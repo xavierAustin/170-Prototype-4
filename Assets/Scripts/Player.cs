@@ -81,16 +81,16 @@ public class Player : MonoBehaviour {
 
     }
     void TryGrab(){
-    if (currentPickup == null) return;
+        if (currentPickup == null) return;
 
-    if (!currentPickup.isHeld)
-    {
-        currentPickup.Grab();
-    }
-    else
-    {
-        currentPickup.Drop();
-    }
+        if (!currentPickup.isHeld)
+        {
+            currentPickup.Grab();
+        }
+        else
+        {
+            currentPickup.Drop();
+        }
     }
 
 
@@ -127,17 +127,20 @@ public class Player : MonoBehaviour {
         input[(int)I.mb1] = Input.GetMouseButton(0);
     }
     void OnTriggerEnter(Collider other){
-    if (other.CompareTag("Pickup"))
-    {
         currentPickup = other.GetComponent<Pickup>();
-    }
+
+        if (!currentPickup) 
+            return;
+        
+        currentPickup.SetOutline(true);
     }
 
     void OnTriggerExit(Collider other){
-    if (other.GetComponent<Pickup>() == currentPickup)
-    {
-        currentPickup = null;
-    }
+        if (other.GetComponent<Pickup>() == currentPickup)
+        {
+            currentPickup.SetOutline(false);
+            currentPickup = null;
+        }
     }
 
 }
