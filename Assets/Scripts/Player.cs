@@ -138,7 +138,7 @@ public class Player : MonoBehaviour {
 
         input[(int)I.space] = (Input.GetKey("space") || Input.GetKey("enter"));
 
-        input[(int)I.mb1] = Input.GetMouseButton(0);
+        input[(int)I.mb1] = Input.GetMouseButton(0) || Input.GetKey("e");
     }
 
     void OnTriggerEnter(Collider other){

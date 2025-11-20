@@ -23,7 +23,7 @@ public class Pickup : MonoBehaviour
             rb.isKinematic = true;
 
         transform.SetParent(grabPoint);
-        transform.localPosition = Vector3.forward * 2;
+        transform.localPosition = Vector3.forward * transform.localScale.z;
         transform.localRotation = Quaternion.identity;
     }
 
