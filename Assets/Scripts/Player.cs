@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class Player : MonoBehaviour {
     //public
@@ -7,6 +8,7 @@ public class Player : MonoBehaviour {
     public float fbSpd = 0.4f;
     public float lrSpd = 2.3f;
     public float mouseSensitivity = 0.3f;
+    public int shellLevel = 0;
     //private
     string state = "default";
     enum I {
@@ -25,6 +27,8 @@ public class Player : MonoBehaviour {
     float cameraLocalRotY = 0.0f;
     float cameraLocalRotX = 0.0f;
     Pickup currentPickup;
+    Pickup heldPickup;
+    bool canGrab = true;
 
     void Start() {
         pRB = GetComponent<Rigidbody>();
@@ -75,21 +79,31 @@ public class Player : MonoBehaviour {
             case ("fall"):
             break;
         }
-        if (input[(int)I.mb1]) {
+        if (input[(int)I.mb1] && canGrab) {
             TryGrab();
+            StartCoroutine(GrabCooldownTimer());
         }
-
     }
-    void TryGrab(){
-        if (currentPickup == null) return;
 
-        if (!currentPickup.isHeld)
+    IEnumerator GrabCooldownTimer(){
+        canGrab = false;
+        yield return new WaitForSeconds(0.5f);
+        canGrab = true;
+    }
+
+    void TryGrab(){
+        if (!heldPickup)
         {
+            if (!currentPickup)
+                return;
             currentPickup.Grab();
+            heldPickup = currentPickup;
         }
         else
         {
-            currentPickup.Drop();
+            heldPickup.Drop();
+            if(!heldPickup.isHeld)
+                heldPickup = null;
         }
     }
 
@@ -126,6 +140,7 @@ public class Player : MonoBehaviour {
 
         input[(int)I.mb1] = Input.GetMouseButton(0);
     }
+
     void OnTriggerEnter(Collider other){
         currentPickup = other.GetComponent<Pickup>();
 
@@ -136,11 +151,10 @@ public class Player : MonoBehaviour {
     }
 
     void OnTriggerExit(Collider other){
-        if (other.GetComponent<Pickup>() == currentPickup)
-        {
-            currentPickup.SetOutline(false);
+        var temp = other.GetComponent<Pickup>();
+        if (temp)
+            temp.SetOutline(false);
+        if (temp == currentPickup)
             currentPickup = null;
-        }
     }
-
 }
