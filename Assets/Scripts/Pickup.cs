@@ -27,8 +27,6 @@ public class Pickup : MonoBehaviour
         transform.localRotation = Quaternion.identity;
     }
 
-
-
     public void Drop()
     {
         isHeld = false;

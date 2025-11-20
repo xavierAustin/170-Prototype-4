@@ -4,8 +4,10 @@ public class Shell : Pickup
 {
     public int shellLevel;
 
-    public new void Grab()
+    void Update()
     {
+        if (!isHeld)
+            return;
         Player p = GameObject.FindGameObjectWithTag("PlayerGrab").transform.parent.GetComponent<Player>();
         p.shellLevel = shellLevel;
         Destroy(gameObject);
