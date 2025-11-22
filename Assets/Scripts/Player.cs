@@ -21,7 +21,7 @@ public class Player : MonoBehaviour {
         DONOTUSE
     }
     bool[] input = new bool[(int)I.DONOTUSE];
-    Vector3 vel = new Vector3(0,0,0); //less verbose rigidbody.linearVelocity
+    Vector3 vel = new Vector3(0,0,0); 
     Rigidbody pRB = null;
     float tCameraRot = 0.0f; //range from 0 to 1
     float cameraLocalRotY = 0.0f;
@@ -35,26 +35,30 @@ public class Player : MonoBehaviour {
     }
 
     void FixedUpdate() {
-        vel = pRB.linearVelocity;
+        float currentYVelocity = pRB.linearVelocity.y;
         
         PollInputs();
 
+        Vector3 horizontalVel = Vector3.zero;
+
         switch(state){
             case ("default"):
-                vel = Vector3.zero;
+                horizontalVel = Vector3.zero;
                 DoCameraLookFixed();
             break;
             case ("move"):
-                vel = ((input[(int)I.right] ? transform.right : Vector3.zero) - (input[(int)I.left] ? transform.right : Vector3.zero)) * lrSpd;
+                horizontalVel = ((input[(int)I.right] ? transform.right : Vector3.zero) - (input[(int)I.left] ? transform.right : Vector3.zero)) * lrSpd;
                 if (!input[(int)I.space])
-                    vel += ((input[(int)I.forward] ? transform.forward : Vector3.zero) - (input[(int)I.back] ? transform.forward : Vector3.zero)) * fbSpd;
+                    horizontalVel += ((input[(int)I.forward] ? transform.forward : Vector3.zero) - (input[(int)I.back] ? transform.forward : Vector3.zero)) * fbSpd;
                 DoCameraLookFixed();
             break;
             case ("fall"):
-                vel += Vector3.down * gravity;
+                horizontalVel = new Vector3(pRB.linearVelocity.x, 0, pRB.linearVelocity.z);
+                currentYVelocity -= gravity * Time.fixedDeltaTime; 
             break;
         }
 
+        vel = new Vector3(horizontalVel.x, currentYVelocity, horizontalVel.z);
         pRB.linearVelocity = vel;
     }
 
@@ -117,7 +121,6 @@ public class Player : MonoBehaviour {
     }
 
     void DoCameraLookFixed(){
-        //man cmon c# why doesnt (int)input[(int)I.space] work this looks so bad ;-;
         //tCameraRot = (tCameraRot + (input[(int)I.space] ? 1 : 0))/2;
         tCameraRot = Mathf.Clamp(tCameraRot + (input[(int)I.space] ? 0.2f : -0.2f), 0, 1);
         var angDiff = Mathf.Clamp(cameraLocalRotY, -1.5f, 1.5f);
