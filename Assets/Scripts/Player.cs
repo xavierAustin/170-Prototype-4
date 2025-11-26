@@ -43,30 +43,27 @@ public class Player : MonoBehaviour {
     IEnumerator CustomFixedUpdate() {
         yield return new WaitForSeconds(0.01f);
         while (true){
-            float currentYVelocity = pRB.linearVelocity.y;
-            
-            PollInputs();
+            vel = pRB.linearVelocity;
 
-            Vector3 horizontalVel = Vector3.zero;
+            PollInputs();
 
             switch(state){
                 case ("default"):
-                    horizontalVel = Vector3.zero;
-                    DoCameraLookFixed();
+                    vel = Vector3.zero;
+                    StartCoroutine(DoCameraLookFixed());
                 break;
                 case ("move"):
-                    horizontalVel = ((input[(int)I.right] ? transform.right : Vector3.zero) - (input[(int)I.left] ? transform.right : Vector3.zero)) * lrSpd;
+                    vel = ((input[(int)I.right] ? transform.right : Vector3.zero) - (input[(int)I.left] ? transform.right : Vector3.zero)) * lrSpd;
                     if (!input[(int)I.space])
-                        horizontalVel += ((input[(int)I.forward] ? transform.forward : Vector3.zero) - (input[(int)I.back] ? transform.forward : Vector3.zero)) * fbSpd;
-                    DoCameraLookFixed();
+                        vel += ((input[(int)I.forward] ? transform.forward : Vector3.zero) - (input[(int)I.back] ? transform.forward : Vector3.zero)) * fbSpd;
+                    StartCoroutine(DoCameraLookFixed());
                 break;
                 case ("fall"):
-                    horizontalVel = new Vector3(pRB.linearVelocity.x, 0, pRB.linearVelocity.z);
-                    currentYVelocity -= gravity * Time.fixedDeltaTime; 
+                    //vel = new Vector3(pRB.linearVelocity.x, vel.y, pRB.linearVelocity.z);
+                    vel.y -= gravity * Time.fixedDeltaTime;
                 break;
             }
 
-            vel = new Vector3(horizontalVel.x, currentYVelocity, horizontalVel.z);
             pRB.linearVelocity = vel;
             yield return new WaitForSeconds(0.02f);
         }
@@ -74,6 +71,7 @@ public class Player : MonoBehaviour {
 
     void Update(){
         PollInputs();
+        RaycastHit hitInfo;
         
         switch(state){
             default:
@@ -83,14 +81,23 @@ public class Player : MonoBehaviour {
             case ("default"):
                 if ((input[(int)I.left] ^ input[(int)I.right]) || ((input[(int)I.forward] ^ input[(int)I.back]) && !input[(int)I.space]))
                     state = "move";
+                Physics.Raycast(transform.position, Vector3.down, out hitInfo, 1f);
+                if (hitInfo.collider == null)
+                    state = "fall";
                 DoCameraLook();
             break;
             case ("move"):
                 if (!((input[(int)I.left] ^ input[(int)I.right]) || ((input[(int)I.forward] ^ input[(int)I.back]) && !input[(int)I.space])))
                     state = "default";
+                Physics.Raycast(transform.position, Vector3.down, out hitInfo, 1f);
+                if (hitInfo.collider == null)
+                    state = "fall";
                 DoCameraLook();
             break;
             case ("fall"):
+                Physics.Raycast(transform.position, Vector3.down, out hitInfo, 0.81f);
+                if (hitInfo.collider != null)
+                    state = "default";
                 DoCameraLook();
             break;
         }
@@ -158,17 +165,19 @@ public class Player : MonoBehaviour {
         pCamera.transform.localEulerAngles = Vector3.up*cameraLocalRotY + Vector3.right*cameraLocalRotX;
     }
 
-    void DoCameraLookFixed(){
-        //tCameraRot = (tCameraRot + (input[(int)I.space] ? 1 : 0))/2;
-        tCameraRot = Mathf.Clamp(tCameraRot + (input[(int)I.space] ? 0.2f : -0.2f), 0, 1);
-        var angDiff = Mathf.Clamp(cameraLocalRotY, -1.5f, 1.5f);
-        if (input[(int)I.space])
-            angDiff *= (input[(int)I.forward] ^ input[(int)I.back]) ? (input[(int)I.back] ? 1 : -1) : 0;
-        transform.eulerAngles = (transform.eulerAngles.y + angDiff) * Vector3.up;
-        if (input[(int)I.space])
-            return;
-        cameraLocalRotY -= angDiff;
-        pCamera.transform.localEulerAngles = Vector3.up*cameraLocalRotY + Vector3.right*cameraLocalRotX;
+    IEnumerator DoCameraLookFixed(){
+        for (int i = 0; i < 20; i++){
+            tCameraRot = Mathf.Clamp(tCameraRot + (input[(int)I.space] ? 0.2f : -0.2f), 0, 1);
+            var angDiff = Mathf.Clamp(cameraLocalRotY, -1.5f, 1.5f) / 20;
+            if (input[(int)I.space])
+                angDiff *= (input[(int)I.forward] ^ input[(int)I.back]) ? (input[(int)I.back] ? 1 : -1) : 0;
+            transform.eulerAngles = (transform.eulerAngles.y + angDiff) * Vector3.up;
+            if (!input[(int)I.space]){
+                cameraLocalRotY -= angDiff;
+                pCamera.transform.localEulerAngles = Vector3.up*cameraLocalRotY + Vector3.right*cameraLocalRotX;
+            }
+            yield return new WaitForSeconds(0.001f);
+        }
     }
 
     void PollInputs(){
