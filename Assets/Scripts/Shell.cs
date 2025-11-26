@@ -8,7 +8,8 @@ public class Shell : Pickup
     {
         if (!isHeld)
             return;
-        Player p = GameObject.FindGameObjectWithTag("PlayerGrab").transform.parent.GetComponent<Player>();
+        Player p = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        Debug.Log(p);
         p.shellLevel = shellLevel;
         Destroy(gameObject);
         //do like an animation or somn
