@@ -29,15 +29,14 @@ public class Tutorial : MonoBehaviour
                     break;
                     case (2):
                         currentSprite = (currentSprite - 6) % 3 + 6;
-                        manditoryInteractionPeriod -= (Input.GetKey("space") || Input.GetKey("enter")) ? 1 : 0;
+                        manditoryInteractionPeriod -= (Input.GetKey("space") || Input.GetKey("enter")) ? 4 : 0;
                     break;
                     case (3):
                         currentSprite = (currentSprite - 9) % 2 + 9;
                         manditoryInteractionPeriod -= 
-                            (Input.GetKey("w") || Input.GetKey("up") || Input.GetKey("i")) ||
-                            (Input.GetKey("a") || Input.GetKey("left") || Input.GetKey("j")) || 
-                            (Input.GetKey("s") || Input.GetKey("down") || Input.GetKey("k")) ||
-                            (Input.GetKey("d") || Input.GetKey("right") || Input.GetKey("l")) ? 4 : 0;
+                            ((Input.GetKey("w") || Input.GetKey("up") || Input.GetKey("i")) ||
+                            (Input.GetKey("s") || Input.GetKey("down") || Input.GetKey("k"))) &&
+                            (Input.GetKey("space") || Input.GetKey("enter"))? 1 : 0;
                     break;
                 }
                 yield return new WaitForSeconds(0.04f);
@@ -50,6 +49,7 @@ public class Tutorial : MonoBehaviour
     }
 
     IEnumerator SwapState(){
+        manditoryInteractionPeriod = 99999;
         while (Mathf.Round(transform.position.y) != 0){
             transform.position = new Vector3(transform.position.x, transform.position.y * 2 / 3, 0);
             yield return new WaitForSeconds(0.02f);

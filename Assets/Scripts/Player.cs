@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour {
     //public
@@ -9,6 +10,8 @@ public class Player : MonoBehaviour {
     public float lrSpd = 2.3f;
     public float mouseSensitivity = 0.3f;
     public int shellLevel = 0;
+    public Image[] clawImages;
+    public Sprite[] clawSprites;
     //private
     string state = "default";
     enum I {
@@ -28,6 +31,7 @@ public class Player : MonoBehaviour {
     float cameraLocalRotX = 0.0f;
     Pickup currentPickup;
     Pickup heldPickup;
+    bool canSwing = true;
     bool canGrab = true;
 
     void Start() {
@@ -84,7 +88,11 @@ public class Player : MonoBehaviour {
                 DoCameraLook();
             break;
         }
-        if (input[(int)I.mb1] && canGrab) {
+        if (!input[(int)I.mb1])
+            return;
+        if (canSwing)
+            StartCoroutine(DoSwing());
+        if (canGrab) {
             TryGrab();
             StartCoroutine(GrabCooldownTimer());
         }
@@ -92,8 +100,24 @@ public class Player : MonoBehaviour {
 
     IEnumerator GrabCooldownTimer(){
         canGrab = false;
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitUntil(() => input[(int)I.mb1]);
         canGrab = true;
+    }
+
+    IEnumerator DoSwing(){
+        canSwing = false;
+        clawImages[0].sprite = clawSprites[1];
+        clawImages[1].sprite = clawSprites[1];
+        yield return new WaitForSeconds(0.3f);
+        clawImages[0].sprite = clawSprites[2];
+        clawImages[1].sprite = clawSprites[2];
+        yield return new WaitForSeconds(0.04f);
+        clawImages[0].sprite = clawSprites[3];
+        clawImages[1].sprite = clawSprites[3];
+        yield return new WaitForSeconds(0.1f);
+        canSwing = true;
+        clawImages[0].sprite = clawSprites[0];
+        clawImages[1].sprite = clawSprites[0];
     }
 
     void TryGrab(){
