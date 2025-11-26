@@ -81,6 +81,7 @@ public class Player : MonoBehaviour {
                 DoCameraLook();
             break;
             case ("fall"):
+                DoCameraLook();
             break;
         }
         if (input[(int)I.mb1] && canGrab) {
