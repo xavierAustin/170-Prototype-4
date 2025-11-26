@@ -36,34 +36,40 @@ public class Player : MonoBehaviour {
 
     void Start() {
         pRB = GetComponent<Rigidbody>();
+        Cursor.lockState = CursorLockMode.Locked;
+        StartCoroutine(CustomFixedUpdate());
     }
 
-    void FixedUpdate() {
-        float currentYVelocity = pRB.linearVelocity.y;
-        
-        PollInputs();
+    IEnumerator CustomFixedUpdate() {
+        yield return new WaitForSeconds(0.01f);
+        while (true){
+            float currentYVelocity = pRB.linearVelocity.y;
+            
+            PollInputs();
 
-        Vector3 horizontalVel = Vector3.zero;
+            Vector3 horizontalVel = Vector3.zero;
 
-        switch(state){
-            case ("default"):
-                horizontalVel = Vector3.zero;
-                DoCameraLookFixed();
-            break;
-            case ("move"):
-                horizontalVel = ((input[(int)I.right] ? transform.right : Vector3.zero) - (input[(int)I.left] ? transform.right : Vector3.zero)) * lrSpd;
-                if (!input[(int)I.space])
-                    horizontalVel += ((input[(int)I.forward] ? transform.forward : Vector3.zero) - (input[(int)I.back] ? transform.forward : Vector3.zero)) * fbSpd;
-                DoCameraLookFixed();
-            break;
-            case ("fall"):
-                horizontalVel = new Vector3(pRB.linearVelocity.x, 0, pRB.linearVelocity.z);
-                currentYVelocity -= gravity * Time.fixedDeltaTime; 
-            break;
+            switch(state){
+                case ("default"):
+                    horizontalVel = Vector3.zero;
+                    DoCameraLookFixed();
+                break;
+                case ("move"):
+                    horizontalVel = ((input[(int)I.right] ? transform.right : Vector3.zero) - (input[(int)I.left] ? transform.right : Vector3.zero)) * lrSpd;
+                    if (!input[(int)I.space])
+                        horizontalVel += ((input[(int)I.forward] ? transform.forward : Vector3.zero) - (input[(int)I.back] ? transform.forward : Vector3.zero)) * fbSpd;
+                    DoCameraLookFixed();
+                break;
+                case ("fall"):
+                    horizontalVel = new Vector3(pRB.linearVelocity.x, 0, pRB.linearVelocity.z);
+                    currentYVelocity -= gravity * Time.fixedDeltaTime; 
+                break;
+            }
+
+            vel = new Vector3(horizontalVel.x, currentYVelocity, horizontalVel.z);
+            pRB.linearVelocity = vel;
+            yield return new WaitForSeconds(0.02f);
         }
-
-        vel = new Vector3(horizontalVel.x, currentYVelocity, horizontalVel.z);
-        pRB.linearVelocity = vel;
     }
 
     void Update(){
@@ -93,15 +99,8 @@ public class Player : MonoBehaviour {
         if (canSwing)
             StartCoroutine(DoSwing());
         if (canGrab) {
-            TryGrab();
-            StartCoroutine(GrabCooldownTimer());
+            StartCoroutine(TryGrab());
         }
-    }
-
-    IEnumerator GrabCooldownTimer(){
-        canGrab = false;
-        yield return new WaitUntil(() => input[(int)I.mb1]);
-        canGrab = true;
     }
 
     IEnumerator DoSwing(){
@@ -116,24 +115,38 @@ public class Player : MonoBehaviour {
         clawImages[1].sprite = clawSprites[3];
         yield return new WaitForSeconds(0.1f);
         canSwing = true;
-        clawImages[0].sprite = clawSprites[0];
-        clawImages[1].sprite = clawSprites[0];
     }
 
-    void TryGrab(){
+    IEnumerator TryGrab(){
+        canGrab = false;
+        yield return new WaitUntil(() => canSwing);
         if (!heldPickup)
         {
-            if (!currentPickup)
-                return;
+            if (!currentPickup){
+                canGrab = true;
+                clawImages[0].sprite = clawSprites[0];
+                clawImages[1].sprite = clawSprites[0];
+                yield break;
+            }
             currentPickup.Grab();
-            heldPickup = currentPickup;
+            if (currentPickup.GetComponent<Shell>()){
+                clawImages[0].sprite = clawSprites[0];
+                clawImages[1].sprite = clawSprites[0];
+            }else
+                heldPickup = currentPickup;
         }
         else
         {
             heldPickup.Drop();
+            heldPickup.SetOutline(false);
+            currentPickup = null;
             if(!heldPickup.isHeld)
                 heldPickup = null;
+            clawImages[0].sprite = clawSprites[0];
+            clawImages[1].sprite = clawSprites[0];
         }
+        yield return new WaitUntil(() => !input[(int)I.mb1]);
+        canGrab = true;
     }
 
 
@@ -169,7 +182,10 @@ public class Player : MonoBehaviour {
         input[(int)I.mb1] = Input.GetMouseButton(0) || Input.GetKey("e");
     }
 
-    void OnTriggerEnter(Collider other){
+    void OnTriggerStay(Collider other){
+        if (currentPickup) 
+            return;
+
         currentPickup = other.GetComponent<Pickup>();
 
         if (!currentPickup) 

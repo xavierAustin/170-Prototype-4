@@ -49,13 +49,12 @@ public class Tutorial : MonoBehaviour
     }
 
     IEnumerator SwapState(){
-        manditoryInteractionPeriod = 99999;
+        manditoryInteractionPeriod = 999999;
         while (Mathf.Round(transform.position.y) != 0){
             transform.position = new Vector3(transform.position.x, transform.position.y * 2 / 3, 0);
             yield return new WaitForSeconds(0.02f);
         }
         state ++;
-        manditoryInteractionPeriod = 59;
         yield return new WaitForSeconds(1.7f);
         if (state == 4)
             Destroy(gameObject);
@@ -63,6 +62,7 @@ public class Tutorial : MonoBehaviour
             transform.position = new Vector3(transform.position.x, (transform.position.y * 2 + 300) / 3, 0);
             yield return new WaitForSeconds(0.02f);
         }
+        manditoryInteractionPeriod = 59;
     }
 
     void Start(){
