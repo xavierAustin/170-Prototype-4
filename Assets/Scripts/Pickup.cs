@@ -3,6 +3,7 @@ using UnityEngine;
 public class Pickup : MonoBehaviour
 {
     public bool isHeld = false;
+    public bool isHeavy = false;
     protected Rigidbody rb;
     protected Transform grabPoint;
     protected int previousLayer;
@@ -21,6 +22,8 @@ public class Pickup : MonoBehaviour
         isHeld = true;
         if (rb)
             rb.isKinematic = true;
+        if (isHeavy)
+            return;
 
         transform.SetParent(grabPoint);
         transform.localPosition = Vector3.forward * transform.localScale.z;

@@ -729,7 +729,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
   pCamera: {fileID: 8070348107161007276}
-  gravity: 2
+  gravity: 10
   fbSpd: 0.4
   lrSpd: 2.3
   mouseSensitivity: 0.3

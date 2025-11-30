@@ -1,17 +1,22 @@
 using UnityEngine;
+using System.Collections;
 
 public class Shell : Pickup
 {
     public int shellLevel;
 
+    void Awake()
+    {
+        isHeavy = true;
+    }
+
     void Update()
     {
         if (!isHeld)
             return;
-        Player p = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-        Debug.Log(p);
-        p.shellLevel = shellLevel;
+        GameObject.FindGameObjectWithTag("Player").GetComponent<Player>().shellLevel = shellLevel;
+        if (rb)
+            rb.isKinematic = true;
         Destroy(gameObject);
-        //do like an animation or somn
     }
 }

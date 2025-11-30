@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour {
     //public
     public GameObject pCamera;
-    public float gravity = 2.0f;
+    public float gravity = 10.0f;
     public float fbSpd = 0.4f;
     public float lrSpd = 2.3f;
     public float mouseSensitivity = 0.3f;
@@ -71,7 +71,13 @@ public class Player : MonoBehaviour {
 
     void Update(){
         PollInputs();
-        RaycastHit hitInfo;
+        int temp = gameObject.layer;
+        Vector3 tDotR = transform.right/2;
+        gameObject.layer = LayerMask.NameToLayer("Outline");
+        bool grounded = Physics.CheckCapsule(transform.position + (Vector3.down/10) + tDotR, 
+            transform.position + (Vector3.down/10) - tDotR, 0.79f, gameObject.layer, QueryTriggerInteraction.Ignore);
+        gameObject.layer = temp;
+        
         
         switch(state){
             default:
@@ -81,22 +87,19 @@ public class Player : MonoBehaviour {
             case ("default"):
                 if ((input[(int)I.left] ^ input[(int)I.right]) || ((input[(int)I.forward] ^ input[(int)I.back]) && !input[(int)I.space]))
                     state = "move";
-                Physics.Raycast(transform.position, Vector3.down, out hitInfo, 1f);
-                if (hitInfo.collider == null)
+                if (!grounded)
                     state = "fall";
                 DoCameraLook();
             break;
             case ("move"):
                 if (!((input[(int)I.left] ^ input[(int)I.right]) || ((input[(int)I.forward] ^ input[(int)I.back]) && !input[(int)I.space])))
                     state = "default";
-                Physics.Raycast(transform.position, Vector3.down, out hitInfo, 1f);
-                if (hitInfo.collider == null)
+                if (!grounded)
                     state = "fall";
                 DoCameraLook();
             break;
             case ("fall"):
-                Physics.Raycast(transform.position, Vector3.down, out hitInfo, 0.81f);
-                if (hitInfo.collider != null)
+                if (grounded)
                     state = "default";
                 DoCameraLook();
             break;

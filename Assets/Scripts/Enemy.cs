@@ -1,11 +1,11 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Enemy : MonoBehaviour
+public class Enemy : Pickup
 {
     [Header("References")]
     public Transform cube;
-    public Transform grabPoint;
+    //public Transform grabPoint;
     
     [Header("Patrol Settings")]
     public Transform[] patrolPoints;
@@ -38,7 +38,8 @@ public class Enemy : MonoBehaviour
         if (cube)
             cubeRb = cube.GetComponent<Rigidbody>();
         
-        agent.speed = patrolSpeed;
+        isHeavy = true;
+        //agent.speed = patrolSpeed;
     }
 
     void Update()
@@ -49,19 +50,19 @@ public class Enemy : MonoBehaviour
         switch (state)
         {
             case State.Patrol:
-                Patrol();
+                //Patrol();
                 if (playerNearby && cube != null && !hasCube)
                     state = State.GoToCube;
                 break;
                 
             case State.GoToCube:
-                GoToCube();
+                //GoToCube();
                 if (!playerNearby && !hasCube)
                     state = State.Patrol;
                 break;
                 
             case State.KeepAway:
-                KeepAway();
+                //KeepAway();
                 if (!playerNearby)
                 {
                     agent.speed = patrolSpeed;
@@ -171,6 +172,7 @@ public class Enemy : MonoBehaviour
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, grabRange);
         
+        /*
         if (patrolPoints == null) return;
         Gizmos.color = Color.blue;
         for (int i = 0; i < patrolPoints.Length; i++)
@@ -180,5 +182,6 @@ public class Enemy : MonoBehaviour
             if (i < patrolPoints.Length - 1 && patrolPoints[i + 1] != null)
                 Gizmos.DrawLine(patrolPoints[i].position, patrolPoints[i + 1].position);
         }
+        */
     }
 }
