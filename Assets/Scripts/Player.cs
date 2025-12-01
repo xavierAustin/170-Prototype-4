@@ -72,10 +72,10 @@ public class Player : MonoBehaviour {
     void Update(){
         PollInputs();
         int temp = gameObject.layer;
-        Vector3 tDotR = transform.right/2;
-        gameObject.layer = LayerMask.NameToLayer("Outline");
+        Vector3 tDotR = transform.right/4;
+        gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
         bool grounded = Physics.CheckCapsule(transform.position + (Vector3.down/10) + tDotR, 
-            transform.position + (Vector3.down/10) - tDotR, 0.79f, gameObject.layer, QueryTriggerInteraction.Ignore);
+            transform.position + (Vector3.down/10) - tDotR, 0.76f, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
         gameObject.layer = temp;
         
         
