@@ -29,10 +29,14 @@ public class Enemy : Pickup
     int currentPatrolIndex = 0;
     bool hasCube = false;
     Rigidbody cubeRb;
+    bool prevHState = false;
+    int health = 6;
+    ParticleSystem particles;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        particles = GetComponent<ParticleSystem>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
         
         if (cube)
@@ -70,6 +74,15 @@ public class Enemy : Pickup
                 }
                 break;
         }
+
+        if (isHeld){
+            health --;
+            isHeld = false;
+            player.gameObject.GetComponent<Player>().ForceDrop();
+            particles.Play();
+        }
+        if (health == 0)
+            Destroy(gameObject);
     }
 
     void Patrol()

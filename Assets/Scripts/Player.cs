@@ -34,6 +34,15 @@ public class Player : MonoBehaviour {
     bool canSwing = true;
     bool canGrab = true;
 
+    public void ForceDrop(){
+        heldPickup.Drop();
+        heldPickup.SetOutline(false);
+        currentPickup = null;
+        heldPickup = null;
+        clawImages[0].sprite = clawSprites[0];
+        clawImages[1].sprite = clawSprites[0];
+    }
+
     void Start() {
         pRB = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
