@@ -39,7 +39,7 @@ public class Enemy : Pickup
             cubeRb = cube.GetComponent<Rigidbody>();
         
         isHeavy = true;
-        //agent.speed = patrolSpeed;
+        agent.speed = patrolSpeed;
     }
 
     void Update()
@@ -50,19 +50,19 @@ public class Enemy : Pickup
         switch (state)
         {
             case State.Patrol:
-                //Patrol();
+                Patrol();
                 if (playerNearby && cube != null && !hasCube)
                     state = State.GoToCube;
                 break;
                 
             case State.GoToCube:
-                //GoToCube();
+                GoToCube();
                 if (!playerNearby && !hasCube)
                     state = State.Patrol;
                 break;
                 
             case State.KeepAway:
-                //KeepAway();
+                KeepAway();
                 if (!playerNearby)
                 {
                     agent.speed = patrolSpeed;
@@ -74,7 +74,7 @@ public class Enemy : Pickup
 
     void Patrol()
     {
-        if (patrolPoints.Length == 0) return;
+        if (patrolPoints[currentPatrolIndex] == null || patrolPoints.Length == 0) return;
         
         agent.SetDestination(patrolPoints[currentPatrolIndex].position);
         
@@ -156,6 +156,19 @@ public class Enemy : Pickup
         
         if (cubeRb)
             cubeRb.isKinematic = false;
+    }
+
+    void OnDrawGizmos()
+    {
+        for (int i = 0; i < patrolPoints.Length; i++){
+            int j = (i + 1) % patrolPoints.Length;
+            if (patrolPoints[i] == null || patrolPoints[j] == null)
+                return;
+            Gizmos.color = Color.blue;
+            Gizmos.DrawLine(patrolPoints[i].position,patrolPoints[j].position);
+            Gizmos.color = Color.purple;
+            Gizmos.DrawLine(patrolPoints[i].position,transform.position);
+        }
     }
 
     void OnDrawGizmosSelected()
