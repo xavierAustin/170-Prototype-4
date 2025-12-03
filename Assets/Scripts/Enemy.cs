@@ -6,6 +6,7 @@ public class Enemy : Pickup
     [Header("References")]
     public Transform cube;
     //public Transform grabPoint;
+    public GameObject particles;
     
     [Header("Patrol Settings")]
     public Transform[] patrolPoints;
@@ -31,12 +32,10 @@ public class Enemy : Pickup
     Rigidbody cubeRb;
     bool prevHState = false;
     int health = 6;
-    ParticleSystem particles;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        particles = GetComponent<ParticleSystem>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
         
         if (cube)
@@ -79,10 +78,13 @@ public class Enemy : Pickup
             health --;
             isHeld = false;
             player.gameObject.GetComponent<Player>().ForceDrop();
-            particles.Play();
+            var temp = Instantiate(particles);
+            temp.transform.position = transform.position;
         }
-        if (health == 0)
+        if (health == 0){
+            DropCube();
             Destroy(gameObject);
+        }
     }
 
     void Patrol()
