@@ -364,6 +364,28 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: TutorialSprites_11
+      rect:
+        serializedVersion: 2
+        x: 1200
+        y: 0
+        width: 400
+        height: 400
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c55b2f414d3cb0b4eadc49243f4c5950
+      internalID: -184439347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -382,6 +404,7 @@ TextureImporter:
       TutorialSprites_0: 2146759042592386317
       TutorialSprites_1: -4649270237305009246
       TutorialSprites_10: 218133048
+      TutorialSprites_11: -184439347
       TutorialSprites_2: -1925219971
       TutorialSprites_3: 1139033160
       TutorialSprites_4: -1188822360
