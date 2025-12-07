@@ -50,16 +50,16 @@ public class Tutorial : MonoBehaviour
 
     IEnumerator SwapState(){
         manditoryInteractionPeriod = 999999;
-        while (Mathf.Round(transform.position.y) != 0){
-            transform.position = new Vector3(transform.position.x, transform.position.y * 2 / 3, 0);
+        while (Mathf.Round(transform.localScale.y * 100) != 0){
+            transform.localScale = new Vector3(1, transform.localScale.y * 2 / 3, 1);
             yield return new WaitForSeconds(0.02f);
         }
         state ++;
         yield return new WaitForSeconds(1.7f);
         if (state == 4)
             Destroy(gameObject);
-        while (Mathf.Round(transform.position.y) != 300){
-            transform.position = new Vector3(transform.position.x, (transform.position.y * 2 + 300) / 3, 0);
+        while (Mathf.Round(transform.localScale.y * 100) != 100){
+            transform.localScale = new Vector3(1, (transform.localScale.y * 2 + 1) / 3, 1);
             yield return new WaitForSeconds(0.02f);
         }
         manditoryInteractionPeriod = 59;
