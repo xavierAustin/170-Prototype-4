@@ -47,8 +47,8 @@ public class Player : MonoBehaviour {
         clawImages[1].sprite = clawSprites[0];
     }
 
-    public void UpdateShellHP(int value){
-        if (shellHP > 0){
+    public void UpdateShellHP(int value, bool replaceShell = true){
+        if (replaceShell && shellHP > 0){
             var temp = Instantiate(shellPrefab);
             temp.transform.position = transform.position;
             temp.GetComponent<Shell>().shellHP = shellHP;
