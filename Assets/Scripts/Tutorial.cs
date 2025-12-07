@@ -39,6 +39,8 @@ public class Tutorial : MonoBehaviour
                             (Input.GetKey("space") || Input.GetKey("enter"))? 1 : 0;
                     break;
                 }
+                if (manditoryInteractionPeriod > 59)
+                    tutImage.sprite = sprites[currentSprite];
                 yield return new WaitForSeconds(0.04f);
             }
             if (manditoryInteractionPeriod < 0)
@@ -66,6 +68,7 @@ public class Tutorial : MonoBehaviour
     }
 
     void Start(){
+        transform.localScale = Vector3.zero;
         StartCoroutine(SwapState());
         StartCoroutine(HandleSprites());
     }

@@ -1921,6 +1921,7 @@ GameObject:
   - component: {fileID: 732890328}
   - component: {fileID: 732890327}
   - component: {fileID: 732890326}
+  - component: {fileID: 732890329}
   m_Layer: 3
   m_Name: Cube (11)
   m_TagString: Untagged
@@ -1937,8 +1938,8 @@ Transform:
   m_GameObject: {fileID: 732890324}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -36.29, y: 2.78, z: -7.71}
-  m_LocalScale: {x: 0.8506133, y: 4.4620514, z: 4.615352}
+  m_LocalPosition: {x: -37.59, y: 2.78, z: -7.71}
+  m_LocalScale: {x: 3.7888868, y: 4.4620514, z: 4.615352}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1332609859}
@@ -2020,6 +2021,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 732890324}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &732890329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 732890324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a80ad639fceada4abe9d65f2d5e4d24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WinTrigger
 --- !u!1 &757557056
 GameObject:
   m_ObjectHideFlags: 0
