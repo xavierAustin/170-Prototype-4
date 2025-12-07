@@ -12,6 +12,7 @@ public class Player : MonoBehaviour {
     public GameObject shellThing;
     public Image[] clawImages;
     public Sprite[] clawSprites;
+    public GameObject aimReticle;
     //private
     string state = "default";
     enum I {
@@ -84,6 +85,7 @@ public class Player : MonoBehaviour {
         shellHPUI = shellThing.transform.GetChild(0).gameObject.GetComponent<RectTransform>();
         shellHPUI.sizeDelta = new Vector2(0,shellHPUI.sizeDelta.y);
         shellPrefab = Resources.Load<GameObject>("shell");
+        aimReticle.SetActive(false);
     }
 
     IEnumerator UpdateShellUI(){
@@ -179,6 +181,7 @@ public class Player : MonoBehaviour {
 
     IEnumerator TryGrab(){
         canGrab = false;
+        aimReticle.SetActive(false);
         yield return new WaitUntil(() => canSwing);
         if (!heldPickup)
         {
@@ -254,12 +257,15 @@ public class Player : MonoBehaviour {
             return;
         
         currentPickup.SetOutline(true);
+        aimReticle.SetActive(true);
     }
 
     void OnTriggerExit(Collider other){
         var temp = other.GetComponent<Pickup>();
-        if (temp && temp != heldPickup)
+        if (temp && temp != heldPickup){
             temp.SetOutline(false);
+            aimReticle.SetActive(false);
+        }
         if (temp == currentPickup)
             currentPickup = null;
     }
