@@ -199,17 +199,5 @@ public class Enemy : Pickup
         
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, grabRange);
-        
-        /*
-        if (patrolPoints == null) return;
-        Gizmos.color = Color.blue;
-        for (int i = 0; i < patrolPoints.Length; i++)
-        {
-            if (patrolPoints[i] == null) continue;
-            Gizmos.DrawSphere(patrolPoints[i].position, 0.3f);
-            if (i < patrolPoints.Length - 1 && patrolPoints[i + 1] != null)
-                Gizmos.DrawLine(patrolPoints[i].position, patrolPoints[i + 1].position);
-        }
-        */
     }
 }

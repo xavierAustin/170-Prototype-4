@@ -10,6 +10,7 @@ public class Player : MonoBehaviour {
     public float lrSpd = 2.3f;
     public float mouseSensitivity = 0.3f;
     public int shellLevel = 0;
+    public Image shellThing;
     public Image[] clawImages;
     public Sprite[] clawSprites;
     //private
@@ -47,6 +48,10 @@ public class Player : MonoBehaviour {
         pRB = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
         StartCoroutine(CustomFixedUpdate());
+    }
+
+    IEnumerator UpdateShellUI(){
+        yield return new WaitForSeconds(1.5f);
     }
 
     IEnumerator CustomFixedUpdate() {
@@ -217,7 +222,7 @@ public class Player : MonoBehaviour {
 
     void OnTriggerExit(Collider other){
         var temp = other.GetComponent<Pickup>();
-        if (temp)
+        if (temp && temp != heldPickup)
             temp.SetOutline(false);
         if (temp == currentPickup)
             currentPickup = null;
