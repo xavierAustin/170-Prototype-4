@@ -5115,6 +5115,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7663481672193446130, guid: 4ff24e8ddc163c049be974ed934051be, type: 3}
+      propertyPath: grabRange
+      value: 1.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7663481672193446130, guid: 4ff24e8ddc163c049be974ed934051be, type: 3}
+      propertyPath: catchDistance
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7663481672193446130, guid: 4ff24e8ddc163c049be974ed934051be, type: 3}
       propertyPath: patrolPoints.Array.size
       value: 3
       objectReference: {fileID: 0}

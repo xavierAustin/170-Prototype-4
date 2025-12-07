@@ -47,6 +47,10 @@ public class Player : MonoBehaviour {
         clawImages[1].sprite = clawSprites[0];
     }
 
+    public void Damage(int value){
+        UpdateShellHP(shellHP - value, false);
+    }
+
     public void UpdateShellHP(int value, bool replaceShell = true){
         if (replaceShell && shellHP > 0){
             var temp = Instantiate(shellPrefab);
@@ -58,7 +62,7 @@ public class Player : MonoBehaviour {
     }
 
     IEnumerator ShellUIAnimate(){
-        while (Mathf.Round(shellThing.transform.localScale.y * 100) != 100){
+        for (int i = 0; i < 20; i++){
             shellThing.transform.localScale = new Vector3(1, (shellThing.transform.localScale.y * 2 + 1) / 3, 1);
             yield return new WaitForSeconds(0.02f);
         }
@@ -71,7 +75,7 @@ public class Player : MonoBehaviour {
         }
         shellThing.transform.position = temp;
         yield return new WaitForSeconds(0.4f);
-        while (Mathf.Round(shellThing.transform.localScale.y * 100) != 0){
+        for (int i = 0; i < 20; i++){
             shellThing.transform.localScale = new Vector3(1, shellThing.transform.localScale.y * 2 / 3, 1);
             yield return new WaitForSeconds(0.02f);
         }

@@ -86,8 +86,9 @@ MonoBehaviour:
   detectionRange: 8
   fleeSpeed: 5
   preferredDistance: 6
-  catchDistance: 1.5
-  grabRange: 1.5
+  grabRange: 1.8
+  damage: 1
+  health: 6
 --- !u!135 &393539281566524079
 SphereCollider:
   m_ObjectHideFlags: 0
