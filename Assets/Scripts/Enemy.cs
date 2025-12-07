@@ -30,7 +30,7 @@ public class Enemy : Pickup
     int currentPatrolIndex = 0;
     bool hasCube = false;
     Rigidbody cubeRb;
-    bool prevHState = false;
+    //bool prevHState = false;
     int health = 6;
 
     void Start()

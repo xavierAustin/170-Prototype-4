@@ -9,8 +9,7 @@ public class Player : MonoBehaviour {
     public float fbSpd = 0.4f;
     public float lrSpd = 2.3f;
     public float mouseSensitivity = 0.3f;
-    public int shellLevel = 0;
-    public Image shellThing;
+    public GameObject shellThing;
     public Image[] clawImages;
     public Sprite[] clawSprites;
     //private
@@ -33,7 +32,10 @@ public class Player : MonoBehaviour {
     Pickup currentPickup;
     Pickup heldPickup;
     bool canSwing = true;
+    int shellHP = 0;
+    RectTransform shellHPUI;
     bool canGrab = true;
+    GameObject shellPrefab;
 
     public void ForceDrop(){
         heldPickup.Drop();
@@ -44,10 +46,44 @@ public class Player : MonoBehaviour {
         clawImages[1].sprite = clawSprites[0];
     }
 
+    public void UpdateShellHP(int value){
+        if (shellHP > 0){
+            var temp = Instantiate(shellPrefab);
+            temp.transform.position = transform.position;
+            temp.GetComponent<Shell>().shellHP = shellHP;
+        }
+        shellHP = value;
+        StartCoroutine(ShellUIAnimate());
+    }
+
+    IEnumerator ShellUIAnimate(){
+        while (Mathf.Round(shellThing.transform.localScale.y * 100) != 100){
+            shellThing.transform.localScale = new Vector3(1, (shellThing.transform.localScale.y * 2 + 1) / 3, 1);
+            yield return new WaitForSeconds(0.02f);
+        }
+        yield return new WaitForSeconds(0.4f);
+        shellHPUI.sizeDelta = new Vector2(3 * shellHP, shellHPUI.sizeDelta.y);
+        Vector3 temp = shellThing.transform.position;
+        for (int i = 0; i < 10; i ++){
+            shellThing.transform.position = new Vector3(temp.x + Random.Range(-10,11) * 3, temp.y + Random.Range(-10,11) * 3, temp.z);
+            yield return new WaitForSeconds(0.02f);
+        }
+        shellThing.transform.position = temp;
+        yield return new WaitForSeconds(0.4f);
+        while (Mathf.Round(shellThing.transform.localScale.y * 100) != 0){
+            shellThing.transform.localScale = new Vector3(1, shellThing.transform.localScale.y * 2 / 3, 1);
+            yield return new WaitForSeconds(0.02f);
+        }
+    }
+
     void Start() {
         pRB = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
         StartCoroutine(CustomFixedUpdate());
+        shellThing.transform.localScale = Vector3.zero;
+        shellHPUI = shellThing.transform.GetChild(0).gameObject.GetComponent<RectTransform>();
+        shellHPUI.sizeDelta = new Vector2(0,shellHPUI.sizeDelta.y);
+        shellPrefab = Resources.Load<GameObject>("shell");
     }
 
     IEnumerator UpdateShellUI(){
