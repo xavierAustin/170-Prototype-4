@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Player : MonoBehaviour {
@@ -48,6 +49,8 @@ public class Player : MonoBehaviour {
     }
 
     public void Damage(int value){
+        if (shellHP < value)
+            SceneManager.LoadScene("LoseScreen");
         UpdateShellHP(shellHP - value, false);
     }
 
