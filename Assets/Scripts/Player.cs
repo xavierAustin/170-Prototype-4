@@ -38,6 +38,7 @@ public class Player : MonoBehaviour {
     RectTransform shellHPUI;
     bool canGrab = true;
     GameObject shellPrefab;
+    IEnumerator previousUIAnim = null;
 
     public void ForceDrop(){
         heldPickup.Drop();
@@ -49,19 +50,23 @@ public class Player : MonoBehaviour {
     }
 
     public void Damage(int value){
-        if (shellHP < value)
-            SceneManager.LoadScene("LoseScreen");
         UpdateShellHP(shellHP - value, false);
     }
 
     public void UpdateShellHP(int value, bool replaceShell = true){
+        if (previousUIAnim != null){
+            StopCoroutine(previousUIAnim);
+        }
+        previousUIAnim = ShellUIAnimate();
         if (replaceShell && shellHP > 0){
             var temp = Instantiate(shellPrefab);
             temp.transform.position = transform.position;
             temp.GetComponent<Shell>().shellHP = shellHP;
         }
         shellHP = value;
-        StartCoroutine(ShellUIAnimate());
+        if (shellHP < 0)
+            SceneManager.LoadScene("LoseScreen");
+        StartCoroutine(previousUIAnim);
     }
 
     IEnumerator ShellUIAnimate(){

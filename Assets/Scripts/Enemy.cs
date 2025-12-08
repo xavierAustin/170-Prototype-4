@@ -30,6 +30,7 @@ public class Enemy : Pickup
     
     enum State { 
         Patrol,
+        Idle,
         Pursue,
         Attack,
         GoToCube, 
@@ -42,7 +43,6 @@ public class Enemy : Pickup
     int currentPatrolIndex = 0;
     bool hasCube = false;
     Rigidbody cubeRb;
-    bool runningCoroutine = false;
 
     void Start()
     {
@@ -64,7 +64,6 @@ public class Enemy : Pickup
         switch (state)
         {
             case State.Patrol:
-                runningCoroutine = false;
                 if (patrolPoints[currentPatrolIndex] == null || patrolPoints.Length == 0) return;
         
                 agent.SetDestination(patrolPoints[currentPatrolIndex].position);
@@ -134,7 +133,6 @@ public class Enemy : Pickup
                 }
                 break;
             case State.Pursue:
-                runningCoroutine = false;
                 agent.SetDestination(player.position);
                 if (distToPlayer < grabRange)
                     state = State.Attack;
@@ -143,6 +141,7 @@ public class Enemy : Pickup
             break;
             case State.Attack:
                 StartCoroutine(Attack());
+                state = State.Idle;
             break;
         }
 
@@ -162,9 +161,6 @@ public class Enemy : Pickup
     }
 
     IEnumerator Attack(){
-        if (runningCoroutine)
-            yield break;
-        runningCoroutine = true;
         yield return new WaitForSeconds(windupTime);
         var distToPlayer = Vector3.Distance(transform.position,player.position);
         if (distToPlayer < grabRange)
